@@ -1,0 +1,56 @@
+# Documentation checks only. No build, no deploy, no secrets.
+# App test workflows are added after the stack is approved (OD-18, ADR-003).
+name: docs-validation
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: docs-validation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
+        with:
+          python-version: "3.12"
+
+      - name: Links, anchors, index back-links, secrets, forbidden claims
+        run: python3 tools/scripts/validate_docs.py
+
+  mermaid:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
+        with:
+          python-version: "3.12"
+
+      - name: Install mermaid-cli
+        run: npm install --global @mermaid-js/mermaid-cli@11.16.0
+
+      - name: Allow headless Chromium for mmdc
+        run: echo 'kernel.apparmor_restrict_unprivileged_userns=0' | sudo tee /etc/sysctl.d/60-apparmor-namespace.conf && sudo sysctl --system
+
+      - name: Render every Mermaid block
+        run: python3 tools/scripts/validate_docs.py --mermaid

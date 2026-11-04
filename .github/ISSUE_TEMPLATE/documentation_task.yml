@@ -1,0 +1,52 @@
+name: مهمة توثيق / Documentation task
+description: إنشاء وثيقة أو تحديثها أو تصحيحها
+title: "[Docs] "
+labels: ["type: docs"]
+body:
+  - type: input
+    id: task
+    attributes:
+      label: معرف المهمة
+      placeholder: BD-008
+  - type: input
+    id: files
+    attributes:
+      label: الوثائق المعنية
+      placeholder: docs/04-domain/LOGISTICS_PRICING_ENGINE.md
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: نوع التغيير
+      options: ["وثيقة جديدة", "تحديث محتوى", "تصحيح خطأ أو تعارض", "تحسين صياغة أو بنية"]
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: المطلوب
+    validations:
+      required: true
+  - type: dropdown
+    id: info_class
+    attributes:
+      label: فئة المعلومات المضافة
+      multiple: true
+      options: ["موثّق (بمصدر)", "متطلب معتمد", "توصية هندسية", "بيانات افتراضية", "قرار مفتوح"]
+    validations:
+      required: true
+  - type: textarea
+    id: sources
+    attributes:
+      label: المصادر
+      description: رابط وتاريخ لكل رقم أو معلومة موثقة
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: تأكيدات
+      options:
+        - label: لا أرقام أو ادعاءات دون مصدر، ولا عملاء أو شراكات غير موثقة
+          required: true
+        - label: لا مواعيد أو تقديرات زمنية
+          required: true

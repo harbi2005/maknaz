@@ -1,0 +1,45 @@
+name: مهمة بحث / Research task
+description: سؤال يحتاج بحثًا أو مقابلات أو تحققًا من مصدر
+title: "[Research] "
+labels: ["type: research"]
+body:
+  - type: input
+    id: task
+    attributes:
+      label: معرف المهمة
+      placeholder: BD-005
+  - type: textarea
+    id: question
+    attributes:
+      label: سؤال البحث
+      description: سؤال واحد محدد يمكن الإجابة عنه
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: لماذا يهم
+      description: أي قرار أو وثيقة أو OD يعتمد على الإجابة؟
+    validations:
+      required: true
+  - type: textarea
+    id: method
+    attributes:
+      label: المنهج
+      description: مصادر رسمية، مقابلات، بيانات منشورة...
+  - type: textarea
+    id: output
+    attributes:
+      label: المخرج المتوقع
+      placeholder: جدول بالنتائج + مصدر وتاريخ لكل رقم + حدود النتيجة
+    validations:
+      required: true
+  - type: checkboxes
+    id: rules
+    attributes:
+      label: قواعد البحث
+      options:
+        - label: كل رقم يُسجل بمصدره وتاريخه، وما لم يُتحقق منه يُوسم «غير موثق» ولا يُنشر
+          required: true
+        - label: نتائج المقابلات تُوسم «أولية» مع حجم العينة، ولا تُذكر أسماء جهات دون إذنها
+          required: true

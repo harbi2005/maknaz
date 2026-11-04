@@ -1,0 +1,58 @@
+name: بلاغ عيب / Bug report
+description: سلوك يخالف المتطلبات أو الوثائق
+title: "[Bug] "
+labels: ["type: bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **لا تبلغ عن ثغرة أمنية هنا** — انظر SECURITY.md. لا تلصق أسرارًا أو بيانات شخصية.
+  - type: textarea
+    id: summary
+    attributes:
+      label: الوصف
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: خطوات إعادة الإنتاج
+      placeholder: |
+        1. سجل الدخول بدور ...
+        2. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: المتوقع (مع المرجع)
+      description: ماذا تقول الوثائق؟ اذكر FR / BR / TS
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: الفعلي
+    validations:
+      required: true
+  - type: dropdown
+    id: severity
+    attributes:
+      label: الشدة
+      options:
+        - "S1 — حرج: خسارة بيانات، خطأ مالي، تسرب بين الجهات"
+        - "S2 — كبير: مسار أساسي معطل"
+        - "S3 — متوسط: له بديل"
+        - "S4 — بسيط: شكلي"
+    validations:
+      required: true
+  - type: input
+    id: request_id
+    attributes:
+      label: request_id
+      description: من استجابة الخطأ إن وجد
+  - type: input
+    id: env
+    attributes:
+      label: البيئة
+      placeholder: المتصفح، الجهاز، الفرع أو الإيداع

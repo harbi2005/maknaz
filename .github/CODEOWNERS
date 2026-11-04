@@ -1,0 +1,44 @@
+# CODEOWNERS — template.
+# Active: TL = @harbi2005 · DA = @Lamaomair · UX = @Rnemel
+# Pending: SE, BD, QA usernames. Replace each remaining <role> placeholder with the
+# member's real @username once confirmed, then uncomment the line.
+# Last matching pattern wins. Owners are requested automatically as reviewers.
+# Roles: TL = Team Leader, SE = Software Engineer, BD = Business Developer,
+#        DA = Data Analyst, UX = UI/UX Designer, QA = QA / Software Tester.
+
+# Default: Team Leader
+*                                     @harbi2005
+
+# Product and business
+# /docs/00-product/                   <BD> <TL>
+# /docs/01-business/                  <BD>
+# /data/reference/                    <BD> <DA>
+
+# Requirements and architecture
+# /docs/02-requirements/              <SE> <TL>
+# /docs/03-architecture/              <SE>
+# /docs/04-domain/                    <SE>
+# /apps/                              <SE>
+
+# Design
+/docs/05-design/                      @Rnemel
+/packages/design-tokens/              @Rnemel
+/brand/                               @Rnemel @harbi2005
+
+# Data
+/data/templates/                      @Lamaomair
+/data/demo/                           @Lamaomair
+/docs/02-requirements/DATA_REQUIREMENTS.md    @Lamaomair
+
+# Quality
+# /docs/06-quality/                   <QA>
+# /tests/                             <QA> <SE>
+# /docs/02-requirements/ACCEPTANCE_CRITERIA.md  <QA> <TL>
+
+# Team and governance
+/docs/07-team/                        @harbi2005
+/docs/08-planning/                    @harbi2005
+
+# Repository automation and security (sensitive: second review)
+# /.github/                           <TL> <SE>
+# /SECURITY.md                        <TL> <SE>

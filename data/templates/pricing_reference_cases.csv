@@ -1,0 +1,6 @@
+case_id,test_ref,pricing_model,weight_tons,route_km,payload_tons_per_vehicle,distance_basis,base_fee_halalas,rate_per_km,rate_per_ton,rate_per_ton_km,fixed_route_price_halalas,loading_fee_halalas,fee_basis,minimum_charge_halalas,expected_total_halalas,data_class,notes
+PRC-001,TS-070,PER_TON_KM,600,180,,PER_SHIPMENT,0,,,0.20,,0,FLAT,0,2160000,HYPOTHETICAL,600 x 180 x 0.20 SAR = 21600.00 SAR
+PRC-002,TS-071,PER_KM,600,180,34,PER_TRIP,0,12,,,,270000,FLAT,0,4158000,HYPOTHETICAL,trips = ceil(600/34) = 18; 180 x 12 x 18 + 2700 loading = 41580.00 SAR
+PRC-003,TS-072,PER_TON,600,180,,PER_SHIPMENT,0,,40,,,0,FLAT,0,2400000,HYPOTHETICAL,600 x 40 = 24000.00 SAR; single model only
+PRC-004,TS-072,FIXED_ROUTE,600,180,,PER_SHIPMENT,0,,,,2500000,0,FLAT,0,2500000,HYPOTHETICAL,fixed route price; weight and distance do not change total
+PRC-005,TS-073,PER_TON,600,180,,PER_SHIPMENT,0,,40,,,0,FLAT,3000000,3000000,HYPOTHETICAL,computed 24000.00 < minimum 30000.00; adjustment line 6000.00 SAR

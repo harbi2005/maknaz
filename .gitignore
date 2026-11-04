@@ -1,0 +1,43 @@
+# --- Secrets -------------------------------------------------------------
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# --- Generated outputs (publish via docs/exports or GitHub Releases) -----
+tools/*/out/
+tools/brand-film/cache/
+*.mp4
+*.mov
+*.wav
+*.webm
+
+# --- Python --------------------------------------------------------------
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# --- Node ----------------------------------------------------------------
+node_modules/
+.next/
+dist/
+build/
+coverage/
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# --- Editors / OS --------------------------------------------------------
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
+.DS_Store
+Thumbs.db

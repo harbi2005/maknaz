@@ -1,0 +1,340 @@
+CREATIVE PRODUCTION BRIEF — MAKNAZ
+
+Cinematic Motion Graphics Film | 60 Seconds
+
+You are not a generic AI video generator. You are a world-class creative director, motion designer, brand filmmaker, sound designer, and creative developer working together as one elite production studio.
+
+Your mission is to create an exceptionally polished, cinematic, memorable 60-second motion graphics film introducing مَكْنَز | MAKNAZ, a digital platform that transforms underutilized mining by-products into valuable industrial opportunities.
+
+I will attach the latest MAKNAZ visual identity board. Treat that image as the primary visual reference and source of truth for the brand. Study its logo, Arabic wordmark, English typography, color palette, material textures, imagery, interface direction, and visual language before creating anything.
+
+Do not recreate the identity from scratch. Do not revert to an older concept. Elevate the existing identity into a coherent cinematic experience.
+
+⸻
+
+1. THE CORE IDEA
+
+Mining operations may produce materials and by-products that are underutilized, difficult to evaluate, or challenging to connect with the right industrial buyers.
+
+At the same time, another company may need exactly those materials as a potential input for its operations.
+
+MAKNAZ bridges this gap.
+
+The platform enables mining businesses to list available materials, provide known specifications and laboratory analyses when available, identify missing information, assess potential opportunities, and connect materials with suitable industrial buyers.
+
+The platform can help organize quantities, specifications, and matching opportunities. However, never portray AI as magically determining exact chemical composition without supporting data. Distinguish verified measurements from estimates and missing information.
+
+The central creative message:
+
+What one operation overlooks may be a valuable resource for another.
+
+Arabic brand line:
+من الموارد غير المستغلة، إلى فرص صناعية قابلة للتقييم.
+
+English tagline from the brand identity:
+HIDDEN RESOURCES. NEW VALUE.
+
+The film must communicate the idea clearly, even to a viewer who has never heard of mining by-products or the platform.
+
+2. CREATIVE DIRECTION
+
+Create a cinematic industrial-tech film that feels like a premium brand launch for an ambitious technology company operating at the intersection of mining, industrial intelligence, and resource optimization.
+
+The visual experience should combine:
+
+* Macro cinematography of mineral surfaces, copper-rich rock, fine particles, and layered geological textures.
+* Sophisticated 2D and 3D motion graphics.
+* Precise, elegant kinetic typography.
+* Subtle data visualizations and technical annotations.
+* Industrial landscapes, processing facilities, and restrained glimpses of industrial operations.
+* A visually compelling transformation from an overlooked material into a clearly communicated industrial opportunity.
+* A final brand reveal that feels earned, confident, and memorable.
+
+The aesthetic must feel grounded, intelligent, premium, and purposeful — not like a generic AI startup advertisement.
+
+Avoid excessive futuristic holograms, random floating HUDs, neon-blue interfaces, generic stock footage, childish transitions, meaningless particle effects, and overcomplicated 3D geometry.
+
+The animation must communicate meaning. Every visual effect must serve the narrative.
+
+3. BRAND IDENTITY — STRICT REQUIREMENTS
+
+Use the attached identity board as the source of truth.
+
+Core brand palette:
+
+* Charcoal: #25292B
+* Mineral Gray: #858D8E
+* Burnished Copper: #B8734F
+* Mineral Sand: #E9E5DD
+* Off-White: #F7F6F1
+
+Use charcoal and mineral darkness for cinematic scenes, copper for moments of discovery and value, and sand/off-white for clean informational moments.
+
+Copper must feel like a physical material, not a bright orange digital glow.
+
+Logo rules:
+
+* Preserve the supplied MAKNAZ symbol and wordmark.
+* Do not redesign, distort, stretch, or approximate the logo.
+* If the logo image is difficult to reproduce accurately, use the supplied image asset rather than drawing a replacement.
+* Reveal the logo through a sophisticated material-based animation inspired by mineral layers and copper emerging from stone.
+* Keep the logo clean and legible in the final frame.
+
+Arabic typography is a critical requirement:
+
+* Use a font with reliable Arabic shaping and right-to-left support.
+* Preserve correct Arabic letter connections, direction, spacing, and punctuation.
+* Never render Arabic text as disconnected glyphs or mirrored characters.
+* Never generate Arabic lettering as a texture or an AI-created image if it can be rendered accurately as real text.
+* Test all Arabic text in the actual rendered video.
+* Use the Arabic brand name exactly as supplied: مَكْنَز.
+* Use the English brand name exactly as supplied: MAKNAZ.
+
+Do not invent additional brand colors, alternate logos, or unnecessary visual elements.
+
+4. STORYBOARD — 60 SECONDS
+
+Develop a cohesive narrative with deliberate pacing. The timings below are targets; refine them for the strongest final film while keeping the total duration close to 60 seconds.
+
+SCENE 01 — THE OVERLOOKED RESOURCE
+
+0–7 seconds
+
+Open in near darkness.
+
+A cinematic macro shot travels across a rugged mineral surface. Fine copper highlights reveal geological details as the camera moves slowly through the terrain.
+
+Introduce a feeling of scale, mystery, and hidden potential.
+
+A short Arabic statement appears with precise kinetic typography:
+
+“ليست كل قيمةٍ ظاهرة.”
+
+Keep the composition minimal. Allow the image, sound, and typography to breathe.
+
+SCENE 02 — THE INDUSTRIAL GAP
+
+7–15 seconds
+
+Expand from the mineral macro shot into a wider mining or processing environment.
+
+Show material being separated, collected, or stored. Communicate that some by-products may remain underutilized, without falsely depicting all mining waste as valuable or reusable.
+
+Introduce a visual contrast between available material and the absence of a clear connection to potential buyers.
+
+Arabic message:
+
+“موارد متاحة… وفرص لم تُكتشف بعد.”
+
+The transition should emerge naturally from the material itself — for example, a mineral layer becoming a clean graphic pathway.
+
+SCENE 03 — THE DISCOVERY
+
+15–23 seconds
+
+Introduce MAKNAZ’s visual language.
+
+Copper particles or mineral fragments begin to align into an elegant, purposeful visual system. Lines connect material information to potential industrial applications.
+
+Reveal the brand name:
+
+“مَكْنَز | MAKNAZ”
+
+Then introduce the idea:
+
+“نربط الموارد بالفرص.”
+
+Make this the first major visual payoff. Do not rush the logo reveal.
+
+SCENE 04 — HOW IT WORKS
+
+23–38 seconds
+
+Show the platform’s workflow through beautiful, legible motion graphics and a convincing interface concept.
+
+Step 1 — LIST:
+A mining business lists an available material, its quantity, origin, and known information.
+
+Step 2 — UNDERSTAND:
+The platform organizes available specifications and laboratory results. Missing or unverified information is clearly flagged.
+
+Step 3 — MATCH:
+The platform identifies potential industrial buyers whose requirements may align with the material.
+
+Step 4 — CONNECT:
+The material and the potential buyer are brought together as an industrial opportunity for further evaluation.
+
+Use real interface screenshots if supplied. Otherwise, build a coherent prototype interface that follows the attached identity board.
+
+Do not fabricate real customers, completed transactions, verified savings, operational statistics, or claims that the platform has already achieved commercial results.
+
+All interface text must be readable, correctly written, and intentional. Avoid tiny decorative text masquerading as functional UI.
+
+SCENE 05 — THE VALUE TRANSFORMATION
+
+38–49 seconds
+
+Create the emotional and conceptual climax.
+
+A mineral fragment transitions into a structured material profile, then into a potential industrial application.
+
+Visually connect the stages:
+
+MATERIAL → INFORMATION → MATCHING → OPPORTUNITY
+
+Use elegant camera movement, carefully choreographed typography, restrained copper highlights, and satisfying transitions.
+
+The point is not to suggest that every by-product is automatically valuable. The point is that better information and better connections can reveal opportunities worth evaluating.
+
+Arabic statement:
+
+“قيمةٌ أكبر، تبدأ بفهمٍ أفضل.”
+
+SCENE 06 — THE BRAND FINALE
+
+49–60 seconds
+
+Return to a dark mineral environment.
+
+The camera moves through subtle layers of stone and copper. The visual elements converge into the MAKNAZ logo using the exact supplied identity.
+
+Display:
+
+“مَكْنَز”
+
+“MAKNAZ”
+
+“HIDDEN RESOURCES. NEW VALUE.”
+
+Finish with the Arabic line:
+
+“نحو فرصٍ صناعية أكثر كفاءة.”
+
+End on a composed, premium brand frame. Hold the final composition long enough for the viewer to read it.
+
+Do not add a fake website, QR code, phone number, social account, or call to action unless I provide the actual information.
+
+5. MOTION DESIGN LANGUAGE
+
+Motion should feel intentional and physically grounded.
+
+Use:
+
+* Custom easing curves and carefully tuned spring motion where appropriate.
+* Multi-stage reveals rather than simple opacity fades.
+* Staggered typography and graphic elements.
+* Parallax and cinematic camera movement with restrained depth.
+* Material-inspired transitions using stone, particles, layers, and copper.
+* Smooth transitions that connect the visual logic of one scene to the next.
+* Deliberate negative space and strong composition.
+* Subtle film grain and restrained atmospheric depth where they enhance the image.
+
+Avoid:
+
+* Repeating the same transition throughout the film.
+* Animating every element simultaneously.
+* Excessive camera shake, spinning logos, random zooms, and constant movement.
+* Generic template-based title cards.
+* Unnecessary gradients, glowing outlines, and exaggerated lens flares.
+* Motion that makes the Arabic text difficult to read.
+
+The film should have a clear visual rhythm: mystery → problem → discovery → explanation → transformation → brand reveal.
+
+6. SOUND DESIGN AND MUSIC
+
+Design the soundtrack as an integral part of the film.
+
+Use an original or properly licensed cinematic electronic-industrial sound direction with restrained low-frequency ambience, subtle metallic textures, mineral impacts, refined whooshes, and carefully timed transitions.
+
+The music should gradually build toward the transformation scene and resolve confidently at the final logo reveal.
+
+Every major visual event should have purposeful sound design, but do not overuse impacts.
+
+Do not use unlicensed commercial music or imitate a specific copyrighted soundtrack.
+
+If Arabic narration is feasible with the available tools, create a natural, confident, professional Saudi/Gulf Arabic delivery. The narration should sound composed and intelligent rather than theatrical.
+
+If high-quality Arabic narration is unavailable, prioritize an excellent music-and-typography film over artificial or poorly pronounced speech.
+
+Ensure that music and effects do not overpower the narration, if present.
+
+7. TECHNICAL PRODUCTION
+
+Preferred implementation: Remotion with React and TypeScript, provided the environment supports it.
+
+Use the best available rendering approach if the existing project already uses a suitable working pipeline. Do not unnecessarily rebuild a functioning project in another framework.
+
+Main deliverable:
+
+* MP4
+* Duration: approximately 60 seconds
+* Landscape 16:9
+* 1920 × 1080 resolution
+* 30 fps
+* H.264 video with AAC audio where supported
+
+Keep the source project editable, modular, and organized.
+
+Centralize brand colors, typography, timing, and animation parameters in reusable configuration files. Avoid scattering inconsistent hard-coded values throughout the project.
+
+Use actual assets wherever possible. If you need additional imagery, source suitable assets with appropriate usage rights or create them through available tools.
+
+Do not rely on unsupported external services, paid APIs, or unavailable tools without identifying the dependency first.
+
+8. REQUIRED CREATIVE SKILLS AND WORKFLOW
+
+Before production, inspect the available tools, the attached brand identity, and any existing project files.
+
+If supported in the current Claude environment, use an appropriate motion-graphics skill such as a Remotion motion graphics skill, plus a frontend design skill when building the platform interface.
+
+If the skills are not installed or available, do not pretend they are active. Read their installation instructions and use the relevant principles directly where possible.
+
+Follow this workflow:
+
+1. Study the attached brand identity and extract the visual rules.
+2. Inspect the existing files and available rendering tools.
+3. Develop the visual concept, scene transitions, typography, and sound direction.
+4. Build the entire film as one coherent production.
+5. Render the complete video.
+6. Extract representative frames from the actual render.
+7. Inspect the frames for visual inconsistencies, layout problems, incorrect Arabic shaping, broken logos, unreadable text, clipping, and weak transitions.
+8. Fix identified problems and render again.
+9. Verify the final video’s duration, dimensions, frame rate, audio, and playback.
+10. Deliver the actual rendered MP4 and editable project files.
+
+Do not stop after generating a storyboard, a still image, an HTML mockup, or source code. The objective is a finished, rendered video.
+
+If a technical blocker prevents rendering, clearly identify the blocker and deliver the most complete working project possible without claiming that an MP4 has been produced.
+
+9. QUALITY CONTROL — NON-NEGOTIABLE
+
+Before delivery, evaluate the film as a senior creative director.
+
+Ask:
+
+* Does the first five seconds create genuine curiosity?
+* Can a viewer understand MAKNAZ’s purpose without a technical explanation?
+* Does the film feel specifically designed for a mining-resource platform?
+* Is the attached identity applied consistently?
+* Is the logo accurate and undistorted?
+* Is every Arabic phrase correctly shaped, spelled, and readable?
+* Are the platform’s capabilities described honestly?
+* Does each transition contribute to the narrative?
+* Does the final logo reveal feel memorable?
+* Has the actual rendered output been inspected rather than assumed to be correct?
+
+If the result feels generic, visually noisy, or mechanically assembled, improve it before delivery.
+
+10. EXECUTION INSTRUCTIONS
+
+Do not respond with a long explanation of what you intend to do.
+
+Begin by inspecting the supplied assets, checking the available capabilities, and identifying any existing project that should be continued.
+
+Make reasonable creative decisions independently. Do not ask me to approve every scene or animation.
+
+If a crucial technical dependency is missing, explain that specific blocker. Otherwise, proceed with the full production.
+
+The priority is not to produce more code. The priority is to produce a compelling, polished, brand-consistent film that communicates MAKNAZ’s value in 60 seconds.
+
+Final objective: a cinematic brand film with the visual precision of a premium industrial technology company, the storytelling clarity of an excellent explainer, and the finish of a professional motion-design studio.
