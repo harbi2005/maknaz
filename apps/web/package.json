@@ -1,0 +1,34 @@
+{
+  "name": "@maknaz/web",
+  "version": "0.1.0",
+  "private": true,
+  "description": "MAKNAZ web app: Arabic-first RTL React SPA for mines, factories, carriers and platform admins.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -p tsconfig.json --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@maknaz/design-tokens": "*",
+    "@maknaz/shared": "*",
+    "@tanstack/react-query": "5.105.3",
+    "leaflet": "1.9.4",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "react-leaflet": "5.0.0",
+    "react-router": "7.18.5"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "4.3.4",
+    "@types/leaflet": "1.9.22",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.2.1",
+    "tailwindcss": "4.3.4",
+    "vite": "8.3.5",
+    "vitest": "5.1.0"
+  }
+}

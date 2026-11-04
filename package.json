@@ -1,0 +1,32 @@
+{
+  "name": "maknaz",
+  "private": true,
+  "description": "MAKNAZ MVP monorepo: React web app, Express API, shared domain package.",
+  "type": "module",
+  "workspaces": [
+    "packages/design-tokens",
+    "packages/shared",
+    "apps/api",
+    "apps/web"
+  ],
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "db:start": "npm run db:start -w @maknaz/api",
+    "db:migrate": "npm run db:migrate -w @maknaz/api",
+    "db:seed": "npm run db:seed -w @maknaz/api",
+    "db:reset": "npm run db:reset -w @maknaz/api",
+    "dev": "concurrently -n api,web -c yellow,cyan \"npm run dev -w @maknaz/api\" \"npm run dev -w @maknaz/web\"",
+    "build": "npm run build -w @maknaz/shared && npm run build -w @maknaz/api && npm run build -w @maknaz/web",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test -w @maknaz/shared && npm run test -w @maknaz/api && npm run test -w @maknaz/web",
+    "test:e2e": "playwright test -c tests/e2e/playwright.config.ts",
+    "validate:docs": "python tools/scripts/validate_docs.py"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.1",
+    "concurrently": "10.0.6",
+    "typescript": "5.9.3"
+  }
+}

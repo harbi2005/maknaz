@@ -1,0 +1,857 @@
+// MAKNAZ database schema — mirrors docs/03-architecture/DATABASE_DESIGN.md.
+// Field names stay snake_case to match the REST contract (API_SPECIFICATION §1).
+// CHECK constraints, partial unique indexes and append-only rules that Prisma cannot
+// express are added as raw SQL in the migrations (see prisma/migrations/*/migration.sql).
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ───────────────────────────── accounts ─────────────────────────────
+
+model User {
+  id                String    @id @default(uuid(7)) @db.Uuid
+  email             String    @unique
+  password_hash     String
+  full_name         String
+  phone             String?
+  email_verified_at DateTime? @db.Timestamptz(6)
+  is_platform_admin Boolean   @default(false)
+  status            String    @default("ACTIVE")
+  last_login_at     DateTime? @db.Timestamptz(6)
+  created_at        DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at        DateTime  @updatedAt @db.Timestamptz(6)
+
+  memberships   OrganizationMember[]
+  sessions      UserSession[]
+  notifications Notification[]
+
+  @@map("users")
+}
+
+model UserSession {
+  id           String   @id @default(uuid(7)) @db.Uuid
+  user_id      String   @db.Uuid
+  token_hash   String   @unique @db.Char(64)
+  csrf_token   String
+  expires_at   DateTime @db.Timestamptz(6)
+  last_seen_at DateTime @default(now()) @db.Timestamptz(6)
+  ip           String?
+  user_agent   String?
+  created_at   DateTime @default(now()) @db.Timestamptz(6)
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@index([expires_at])
+  @@map("user_sessions")
+}
+
+model Organization {
+  id                         String    @id @default(uuid(7)) @db.Uuid
+  type                       String
+  legal_name_ar              String
+  legal_name_en              String?
+  commercial_registration_no String
+  city                       String
+  region_code                String
+  contact_email              String
+  contact_phone              String
+  logo_object_key            String?
+  status                     String    @default("PENDING_REVIEW")
+  status_reason              String?
+  reviewed_by                String?   @db.Uuid
+  reviewed_at                DateTime? @db.Timestamptz(6)
+  is_demo                    Boolean   @default(false)
+  created_at                 DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at                 DateTime  @updatedAt @db.Timestamptz(6)
+
+  members            OrganizationMember[]
+  licenses           OrganizationLicense[]
+  mines              Mine[]
+  factory_sites      FactorySite[]
+  carrier_profile    CarrierProfile?
+  operating_locations CarrierOperatingLocation[]
+  service_areas      CarrierServiceArea[]
+  carrier_services   CarrierService[]
+  pricing_rules      CarrierPricingRule[]
+
+  @@unique([type, commercial_registration_no])
+  @@index([type, status])
+  @@map("organizations")
+}
+
+model OrganizationMember {
+  id              String   @id @default(uuid(7)) @db.Uuid
+  organization_id String   @db.Uuid
+  user_id         String   @db.Uuid
+  role            String
+  status          String   @default("ACTIVE")
+  created_at      DateTime @default(now()) @db.Timestamptz(6)
+
+  organization Organization @relation(fields: [organization_id], references: [id], onDelete: Restrict)
+  user         User         @relation(fields: [user_id], references: [id], onDelete: Restrict)
+
+  @@unique([organization_id, user_id])
+  @@index([user_id])
+  @@map("organization_members")
+}
+
+model OrganizationLicense {
+  id                  String    @id @default(uuid(7)) @db.Uuid
+  organization_id     String    @db.Uuid
+  license_type        String
+  license_number      String
+  issuing_authority   String
+  expires_on          DateTime? @db.Date
+  document_object_key String?
+  review_status       String    @default("NOT_REVIEWED")
+  reviewed_by         String?   @db.Uuid
+  reviewed_at         DateTime? @db.Timestamptz(6)
+  created_at          DateTime  @default(now()) @db.Timestamptz(6)
+
+  organization Organization @relation(fields: [organization_id], references: [id])
+
+  @@index([organization_id])
+  @@map("organization_licenses")
+}
+
+// ───────────────────────────── sites ─────────────────────────────
+
+model Mine {
+  id               String   @id @default(uuid(7)) @db.Uuid
+  organization_id  String   @db.Uuid
+  name             String
+  primary_activity String
+  region_code      String
+  address_text     String?
+  lat              Decimal  @db.Decimal(9, 6)
+  lng              Decimal  @db.Decimal(9, 6)
+  status           String   @default("ACTIVE")
+  created_at       DateTime @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime @updatedAt @db.Timestamptz(6)
+
+  organization Organization      @relation(fields: [organization_id], references: [id])
+  listings     MaterialListing[]
+  deals        Deal[]
+
+  @@index([organization_id])
+  @@index([region_code, status])
+  @@index([lat, lng])
+  @@map("mines")
+}
+
+model FactorySite {
+  id              String   @id @default(uuid(7)) @db.Uuid
+  organization_id String   @db.Uuid
+  name            String
+  region_code     String
+  address_text    String?
+  lat             Decimal  @db.Decimal(9, 6)
+  lng             Decimal  @db.Decimal(9, 6)
+  status          String   @default("ACTIVE")
+  created_at      DateTime @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime @updatedAt @db.Timestamptz(6)
+
+  organization Organization    @relation(fields: [organization_id], references: [id])
+  offers       PurchaseOffer[]
+  deals        Deal[]
+
+  @@index([organization_id])
+  @@map("factory_sites")
+}
+
+// ───────────────────────────── catalog ─────────────────────────────
+
+model MaterialCategory {
+  id          String  @id @default(uuid(7)) @db.Uuid
+  code        String  @unique
+  name_ar     String
+  name_en     String
+  cargo_class String
+  is_active   Boolean @default(true)
+
+  listings MaterialListing[]
+
+  @@map("material_categories")
+}
+
+model MaterialListing {
+  id                   String    @id @default(uuid(7)) @db.Uuid
+  mine_id              String    @db.Uuid
+  organization_id      String    @db.Uuid
+  category_id          String    @db.Uuid
+  title                String
+  description          String?
+  physical_state       String
+  unit                 String    @default("TON")
+  total_quantity       Decimal   @db.Decimal(12, 3)
+  reserved_quantity    Decimal   @default(0) @db.Decimal(12, 3)
+  sold_quantity        Decimal   @default(0) @db.Decimal(12, 3)
+  asking_price_halalas BigInt
+  currency             String    @default("SAR") @db.Char(3)
+  is_negotiable        Boolean   @default(true)
+  loading_conditions   String
+  available_from       DateTime? @db.Date
+  available_until      DateTime? @db.Date
+  status               String    @default("DRAFT")
+  published_at         DateTime? @db.Timestamptz(6)
+  version              Int       @default(0)
+  created_at           DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at           DateTime  @updatedAt @db.Timestamptz(6)
+
+  mine           Mine                    @relation(fields: [mine_id], references: [id])
+  category       MaterialCategory        @relation(fields: [category_id], references: [id])
+  specifications MaterialSpecification[]
+  documents      MaterialDocument[]
+  reservations   InventoryReservation[]
+  offers         PurchaseOffer[]
+  deals          Deal[]
+
+  @@index([status, category_id])
+  @@index([mine_id])
+  @@index([organization_id])
+  @@index([asking_price_halalas])
+  @@map("material_listings")
+}
+
+model MaterialSpecification {
+  id                  String   @id @default(uuid(7)) @db.Uuid
+  listing_id          String   @db.Uuid
+  property_name       String
+  value_numeric       Decimal? @db.Decimal(18, 6)
+  value_text          String?
+  unit                String?
+  verification_status String
+  document_id         String?  @db.Uuid
+  sort_order          Int      @default(0)
+
+  listing  MaterialListing   @relation(fields: [listing_id], references: [id], onDelete: Cascade)
+  document MaterialDocument? @relation(fields: [document_id], references: [id])
+
+  @@index([listing_id])
+  @@map("material_specifications")
+}
+
+model MaterialDocument {
+  id          String    @id @default(uuid(7)) @db.Uuid
+  listing_id  String    @db.Uuid
+  doc_type    String
+  title       String
+  object_key  String
+  mime_type   String
+  size_bytes  BigInt
+  sha256      String    @db.Char(64)
+  visibility  String    @default("ON_REQUEST")
+  lab_name    String?
+  issued_on   DateTime? @db.Date
+  uploaded_by String    @db.Uuid
+  created_at  DateTime  @default(now()) @db.Timestamptz(6)
+
+  listing        MaterialListing         @relation(fields: [listing_id], references: [id])
+  specifications MaterialSpecification[]
+
+  @@index([listing_id])
+  @@map("material_documents")
+}
+
+model InventoryReservation {
+  id              String    @id @default(uuid(7)) @db.Uuid
+  listing_id      String    @db.Uuid
+  deal_id         String    @unique @db.Uuid
+  quantity        Decimal   @db.Decimal(12, 3)
+  status          String    @default("ACTIVE")
+  released_reason String?
+  created_at      DateTime  @default(now()) @db.Timestamptz(6)
+  closed_at       DateTime? @db.Timestamptz(6)
+
+  listing MaterialListing @relation(fields: [listing_id], references: [id])
+  deal    Deal            @relation(fields: [deal_id], references: [id])
+
+  @@index([listing_id, status])
+  @@map("inventory_reservations")
+}
+
+// ───────────────────────────── trading ─────────────────────────────
+
+model PurchaseOffer {
+  id               String   @id @default(uuid(7)) @db.Uuid
+  reference        String   @unique
+  listing_id       String   @db.Uuid
+  factory_org_id   String   @db.Uuid
+  mine_org_id      String   @db.Uuid
+  delivery_site_id String   @db.Uuid
+  status           String   @default("SUBMITTED")
+  created_by       String   @db.Uuid
+  created_at       DateTime @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime @updatedAt @db.Timestamptz(6)
+
+  listing       MaterialListing        @relation(fields: [listing_id], references: [id])
+  delivery_site FactorySite            @relation(fields: [delivery_site_id], references: [id])
+  rounds        OfferNegotiationRound[]
+  deal          Deal?
+
+  @@index([mine_org_id, status])
+  @@index([factory_org_id, status])
+  @@map("purchase_offers")
+}
+
+model OfferNegotiationRound {
+  id                   String    @id @default(uuid(7)) @db.Uuid
+  offer_id             String    @db.Uuid
+  round_no             Int       @db.SmallInt
+  proposed_by          String
+  quantity             Decimal   @db.Decimal(12, 3)
+  unit_price_halalas   BigInt
+  loading_window_start DateTime? @db.Timestamptz(6)
+  loading_window_end   DateTime? @db.Timestamptz(6)
+  message              String?
+  status               String    @default("PENDING")
+  expires_at           DateTime  @db.Timestamptz(6)
+  responded_at         DateTime? @db.Timestamptz(6)
+  responded_by         String?   @db.Uuid
+  response_note        String?
+  created_by           String    @db.Uuid
+  created_at           DateTime  @default(now()) @db.Timestamptz(6)
+
+  offer PurchaseOffer @relation(fields: [offer_id], references: [id])
+  deals Deal[]
+
+  @@unique([offer_id, round_no])
+  @@map("offer_negotiation_rounds")
+}
+
+model Deal {
+  id                       String    @id @default(uuid(7)) @db.Uuid
+  reference                String    @unique
+  offer_id                 String    @unique @db.Uuid
+  accepted_round_id        String    @db.Uuid
+  listing_id               String    @db.Uuid
+  mine_id                  String    @db.Uuid
+  factory_org_id           String    @db.Uuid
+  mine_org_id              String    @db.Uuid
+  delivery_site_id         String    @db.Uuid
+  quantity_tons            Decimal   @db.Decimal(12, 3)
+  unit_price_halalas       BigInt
+  material_total_halalas   BigInt
+  currency                 String    @default("SAR") @db.Char(3)
+  commercial_snapshot      Json
+  loading_window_start     DateTime  @db.Timestamptz(6)
+  loading_window_end       DateTime  @db.Timestamptz(6)
+  status                   String    @default("PENDING_CARRIER")
+  agreed_at                DateTime  @db.Timestamptz(6)
+  carrier_deadline_at      DateTime  @db.Timestamptz(6)
+  retry_deadline_at        DateTime? @db.Timestamptz(6)
+  confirmed_at             DateTime? @db.Timestamptz(6)
+  selected_quote_id        String?   @db.Uuid
+  payment_deadline_at      DateTime? @db.Timestamptz(6)
+  paid_at                  DateTime? @db.Timestamptz(6)
+  completed_at             DateTime? @db.Timestamptz(6)
+  cancelled_at             DateTime? @db.Timestamptz(6)
+  cancellation_reason      String?
+  cancellation_note        String?
+  cancellation_fault_party String?
+  cancelled_by             String?   @db.Uuid
+  policy_version_id        String    @db.Uuid
+  version                  Int       @default(0)
+  created_at               DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at               DateTime  @updatedAt @db.Timestamptz(6)
+
+  offer          PurchaseOffer         @relation(fields: [offer_id], references: [id])
+  accepted_round OfferNegotiationRound @relation(fields: [accepted_round_id], references: [id])
+  listing        MaterialListing       @relation(fields: [listing_id], references: [id])
+  mine           Mine                  @relation(fields: [mine_id], references: [id])
+  delivery_site  FactorySite           @relation(fields: [delivery_site_id], references: [id])
+  policy_version SystemPolicyVersion   @relation(fields: [policy_version_id], references: [id])
+  selected_quote TransportQuote?       @relation("DealSelectedQuote", fields: [selected_quote_id], references: [id])
+  reservation    InventoryReservation?
+  quotes         TransportQuote[]      @relation("DealQuotes")
+  shipment       Shipment?
+  invoice        Invoice?
+
+  @@index([factory_org_id, status])
+  @@index([mine_org_id, status])
+  @@index([status, carrier_deadline_at])
+  @@map("deals")
+}
+
+// ───────────────────────────── carriers & pricing ─────────────────────────────
+
+model CarrierProfile {
+  organization_id       String  @id @db.Uuid
+  fleet_size_total      Int     @default(0)
+  international_capable Boolean @default(false)
+  notes                 String?
+
+  organization Organization @relation(fields: [organization_id], references: [id])
+
+  @@map("carrier_profiles")
+}
+
+model TransportationMode {
+  code       String  @id
+  name_ar    String
+  name_en    String
+  is_enabled Boolean @default(false)
+
+  vehicle_types VehicleType[]
+  services      CarrierService[]
+
+  @@map("transportation_modes")
+}
+
+model VehicleType {
+  code      String @id
+  mode_code String
+  name_ar   String
+  name_en   String
+
+  mode     TransportationMode @relation(fields: [mode_code], references: [code])
+  services CarrierService[]
+
+  @@map("vehicle_types")
+}
+
+model CarrierOperatingLocation {
+  id              String   @id @default(uuid(7)) @db.Uuid
+  organization_id String   @db.Uuid
+  name            String
+  location_kind   String
+  region_code     String
+  country_code    String   @default("SA")
+  lat             Decimal  @db.Decimal(9, 6)
+  lng             Decimal  @db.Decimal(9, 6)
+  is_active       Boolean  @default(true)
+  created_at      DateTime @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime @updatedAt @db.Timestamptz(6)
+
+  organization Organization       @relation(fields: [organization_id], references: [id])
+  quotes       TransportQuote[]
+
+  @@index([organization_id, is_active])
+  @@index([lat, lng])
+  @@map("carrier_operating_locations")
+}
+
+model CarrierServiceArea {
+  id                    String   @id @default(uuid(7)) @db.Uuid
+  organization_id       String   @db.Uuid
+  area_type             String
+  region_code           String?
+  country_code          String?
+  operating_location_id String?  @db.Uuid
+  radius_km             Decimal? @db.Decimal(7, 1)
+  created_at            DateTime @default(now()) @db.Timestamptz(6)
+
+  organization Organization @relation(fields: [organization_id], references: [id])
+
+  @@unique([organization_id, area_type, region_code])
+  @@index([region_code])
+  @@map("carrier_service_areas")
+}
+
+model CarrierService {
+  id                       String   @id @default(uuid(7)) @db.Uuid
+  organization_id          String   @db.Uuid
+  name                     String
+  mode_code                String
+  vehicle_type_code        String
+  supported_cargo_classes  String[]
+  payload_tons_per_vehicle Decimal  @db.Decimal(8, 3)
+  vehicles_available       Int
+  min_shipment_tons        Decimal  @db.Decimal(12, 3)
+  max_shipment_tons        Decimal  @db.Decimal(12, 3)
+  includes_loading         Boolean  @default(false)
+  includes_unloading       Boolean  @default(false)
+  is_active                Boolean  @default(true)
+  created_at               DateTime @default(now()) @db.Timestamptz(6)
+  updated_at               DateTime @updatedAt @db.Timestamptz(6)
+
+  organization Organization         @relation(fields: [organization_id], references: [id])
+  mode         TransportationMode   @relation(fields: [mode_code], references: [code])
+  vehicle_type VehicleType          @relation(fields: [vehicle_type_code], references: [code])
+  rules        CarrierPricingRule[]
+  quotes       TransportQuote[]
+
+  @@index([organization_id, is_active])
+  @@map("carrier_services")
+}
+
+model CarrierPricingRule {
+  id              String   @id @default(uuid(7)) @db.Uuid
+  organization_id String   @db.Uuid
+  service_id      String   @db.Uuid
+  name            String
+  is_active       Boolean  @default(true)
+  created_at      DateTime @default(now()) @db.Timestamptz(6)
+
+  organization Organization                @relation(fields: [organization_id], references: [id])
+  service      CarrierService              @relation(fields: [service_id], references: [id])
+  versions     CarrierPricingRuleVersion[]
+
+  @@index([service_id])
+  @@map("carrier_pricing_rules")
+}
+
+model CarrierPricingRuleVersion {
+  id                           String    @id @default(uuid(7)) @db.Uuid
+  rule_id                      String    @db.Uuid
+  version_no                   Int
+  pricing_model                String
+  base_fee_halalas             BigInt    @default(0)
+  rate_per_km                  Decimal?  @db.Decimal(14, 4)
+  rate_per_ton                 Decimal?  @db.Decimal(14, 4)
+  rate_per_ton_km              Decimal?  @db.Decimal(14, 4)
+  fixed_route_price_halalas    BigInt?
+  route_origin_region          String?
+  route_destination_region     String?
+  distance_basis               String    @default("PER_SHIPMENT")
+  loading_fee_halalas          BigInt    @default(0)
+  unloading_fee_halalas        BigInt    @default(0)
+  handling_fee_halalas         BigInt    @default(0)
+  fee_basis                    String    @default("FLAT")
+  waiting_fee_per_hour_halalas BigInt    @default(0)
+  free_waiting_hours           Decimal   @default(0) @db.Decimal(4, 1)
+  minimum_charge_halalas       BigInt    @default(0)
+  min_weight_tons              Decimal?  @db.Decimal(12, 3)
+  max_weight_tons              Decimal?  @db.Decimal(12, 3)
+  valid_from                   DateTime  @db.Timestamptz(6)
+  valid_to                     DateTime? @db.Timestamptz(6)
+  status                       String    @default("DRAFT")
+  activated_at                 DateTime? @db.Timestamptz(6)
+  created_at                   DateTime  @default(now()) @db.Timestamptz(6)
+
+  rule   CarrierPricingRule @relation(fields: [rule_id], references: [id])
+  quotes TransportQuote[]
+
+  @@unique([rule_id, version_no])
+  @@map("carrier_pricing_rule_versions")
+}
+
+model TransportQuote {
+  id                               String   @id @default(uuid(7)) @db.Uuid
+  deal_id                          String   @db.Uuid
+  carrier_org_id                   String   @db.Uuid
+  service_id                       String   @db.Uuid
+  pricing_rule_version_id          String   @db.Uuid
+  operating_location_id            String   @db.Uuid
+  straight_line_km_to_mine         Decimal  @db.Decimal(8, 1)
+  straight_line_km_mine_to_factory Decimal  @db.Decimal(8, 1)
+  route_distance_km                Decimal  @db.Decimal(8, 1)
+  distance_band                    String
+  quantity_tons                    Decimal  @db.Decimal(12, 3)
+  trips                            Int
+  proposed_pickup_at               DateTime @db.Timestamptz(6)
+  estimated_transit_hours          Decimal  @db.Decimal(6, 1)
+  transport_total_halalas          BigInt
+  pricing_snapshot                 Json
+  terms                            String?
+  needs_admin_review               Boolean  @default(false)
+  status                           String   @default("SUBMITTED")
+  expires_at                       DateTime @db.Timestamptz(6)
+  is_reassignment                  Boolean  @default(false)
+  submitted_by                     String   @db.Uuid
+  created_at                       DateTime @default(now()) @db.Timestamptz(6)
+  updated_at                       DateTime @updatedAt @db.Timestamptz(6)
+
+  deal               Deal                      @relation("DealQuotes", fields: [deal_id], references: [id])
+  service            CarrierService            @relation(fields: [service_id], references: [id])
+  pricing_version    CarrierPricingRuleVersion @relation(fields: [pricing_rule_version_id], references: [id])
+  operating_location CarrierOperatingLocation  @relation(fields: [operating_location_id], references: [id])
+  selected_for_deals Deal[]                    @relation("DealSelectedQuote")
+  active_on_shipments Shipment[]
+
+  @@index([deal_id, status])
+  @@index([carrier_org_id, status])
+  @@map("transport_quotes")
+}
+
+// ───────────────────────────── logistics ─────────────────────────────
+
+model Shipment {
+  id                          String    @id @default(uuid(7)) @db.Uuid
+  deal_id                     String    @unique @db.Uuid
+  carrier_org_id              String?   @db.Uuid
+  active_quote_id             String?   @db.Uuid
+  status                      String    @default("PENDING_CARRIER")
+  pickup_window_start         DateTime  @db.Timestamptz(6)
+  pickup_window_end           DateTime  @db.Timestamptz(6)
+  planned_pickup_at           DateTime? @db.Timestamptz(6)
+  pickup_deadline_at          DateTime? @db.Timestamptz(6)
+  original_pickup_deadline_at DateTime? @db.Timestamptz(6)
+  extension_count             Int       @default(0) @db.SmallInt
+  reconfirm_deadline_at       DateTime? @db.Timestamptz(6)
+  reassignment_deadline_at    DateTime? @db.Timestamptz(6)
+  ready_at                    DateTime? @db.Timestamptz(6)
+  picked_up_at                DateTime? @db.Timestamptz(6)
+  handover_confirmed_at       DateTime? @db.Timestamptz(6)
+  in_transit_at               DateTime? @db.Timestamptz(6)
+  delivered_at                DateTime? @db.Timestamptz(6)
+  completed_at                DateTime? @db.Timestamptz(6)
+  expected_delivery_at        DateTime? @db.Timestamptz(6)
+  loaded_tons                 Decimal?  @db.Decimal(12, 3)
+  received_tons               Decimal?  @db.Decimal(12, 3)
+  cancelled_at                DateTime? @db.Timestamptz(6)
+  cancellation_reason         String?
+  version                     Int       @default(0)
+  created_at                  DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at                  DateTime  @updatedAt @db.Timestamptz(6)
+
+  deal         Deal                @relation(fields: [deal_id], references: [id])
+  active_quote TransportQuote?     @relation(fields: [active_quote_id], references: [id])
+  legs         ShipmentLeg[]
+  extensions   ShipmentExtension[]
+  events       ShipmentEvent[]
+
+  @@index([carrier_org_id, status])
+  @@index([status, pickup_deadline_at])
+  @@map("shipments")
+}
+
+model ShipmentLeg {
+  id               String  @id @default(uuid(7)) @db.Uuid
+  shipment_id      String  @db.Uuid
+  leg_no           Int     @db.SmallInt
+  mode_code        String
+  origin_kind      String
+  origin_id        String  @db.Uuid
+  destination_kind String
+  destination_id   String  @db.Uuid
+  carrier_org_id   String? @db.Uuid
+
+  shipment Shipment @relation(fields: [shipment_id], references: [id])
+
+  @@unique([shipment_id, leg_no])
+  @@map("shipment_legs")
+}
+
+model ShipmentExtension {
+  id                      String    @id @default(uuid(7)) @db.Uuid
+  shipment_id             String    @db.Uuid
+  sequence_no             Int       @db.SmallInt
+  previous_deadline_at    DateTime  @db.Timestamptz(6)
+  new_deadline_at         DateTime  @db.Timestamptz(6)
+  reason_code             String
+  reason_text             String
+  requested_by            String    @db.Uuid
+  affected_carrier_org_id String?   @db.Uuid
+  reconfirmation_status   String
+  reconfirm_deadline_at   DateTime? @db.Timestamptz(6)
+  reconfirmed_at          DateTime? @db.Timestamptz(6)
+  reconfirmed_by          String?   @db.Uuid
+  decline_reason          String?
+  created_at              DateTime  @default(now()) @db.Timestamptz(6)
+
+  shipment Shipment @relation(fields: [shipment_id], references: [id])
+
+  @@unique([shipment_id, sequence_no])
+  @@map("shipment_extensions")
+}
+
+model ShipmentEvent {
+  id            String   @id @default(uuid(7)) @db.Uuid
+  shipment_id   String   @db.Uuid
+  event_type    String
+  from_status   String?
+  to_status     String?
+  actor_type    String
+  actor_user_id String?  @db.Uuid
+  actor_org_id  String?  @db.Uuid
+  note          String?
+  payload       Json?
+  occurred_at   DateTime @default(now()) @db.Timestamptz(6)
+
+  shipment Shipment @relation(fields: [shipment_id], references: [id])
+
+  @@index([shipment_id, occurred_at])
+  @@map("shipment_events")
+}
+
+// ───────────────────────────── billing (simulated) ─────────────────────────────
+
+model Invoice {
+  id                         String   @id @default(uuid(7)) @db.Uuid
+  reference                  String   @unique
+  deal_id                    String   @unique @db.Uuid
+  buyer_org_id               String   @db.Uuid
+  mine_org_id                String   @db.Uuid
+  carrier_org_id             String   @db.Uuid
+  snapshot                   Json
+  material_total_halalas     BigInt
+  transport_total_halalas    BigInt
+  additional_charges_halalas BigInt   @default(0)
+  grand_total_halalas        BigInt
+  currency                   String   @default("SAR") @db.Char(3)
+  payment_status             String   @default("PAYMENT_PENDING")
+  issued_at                  DateTime @db.Timestamptz(6)
+  payment_deadline_at        DateTime @db.Timestamptz(6)
+  is_simulated               Boolean  @default(true)
+  simulation_label           String   @default("DEMO / SIMULATION — ليست فاتورة ضريبية")
+  created_at                 DateTime @default(now()) @db.Timestamptz(6)
+  updated_at                 DateTime @updatedAt @db.Timestamptz(6)
+
+  deal     Deal               @relation(fields: [deal_id], references: [id])
+  items    InvoiceItem[]
+  payments SimulatedPayment[]
+  refunds  SimulatedRefund[]
+
+  @@map("invoices")
+}
+
+model InvoiceItem {
+  id                  String   @id @default(uuid(7)) @db.Uuid
+  invoice_id          String   @db.Uuid
+  item_type           String
+  description_ar      String
+  quantity            Decimal? @db.Decimal(12, 3)
+  unit_amount_halalas BigInt?
+  line_total_halalas  BigInt
+  source_quote_id     String?  @db.Uuid
+  created_at          DateTime @default(now()) @db.Timestamptz(6)
+
+  invoice  Invoice            @relation(fields: [invoice_id], references: [id])
+  payments SimulatedPayment[]
+
+  @@index([invoice_id])
+  @@map("invoice_items")
+}
+
+model SimulatedPayment {
+  id                  String   @id @default(uuid(7)) @db.Uuid
+  invoice_id          String   @db.Uuid
+  invoice_item_id     String?  @db.Uuid
+  kind                String   @default("PRIMARY")
+  amount_halalas      BigInt
+  status              String
+  idempotency_key     String
+  paid_by_user_id     String   @db.Uuid
+  simulated_reference String   @unique
+  is_simulated        Boolean  @default(true)
+  created_at          DateTime @default(now()) @db.Timestamptz(6)
+
+  invoice      Invoice      @relation(fields: [invoice_id], references: [id])
+  invoice_item InvoiceItem? @relation(fields: [invoice_item_id], references: [id])
+
+  @@unique([invoice_id, idempotency_key])
+  @@map("simulated_payments")
+}
+
+model SimulatedRefund {
+  id                  String    @id @default(uuid(7)) @db.Uuid
+  invoice_id          String    @db.Uuid
+  amount_halalas      BigInt
+  status              String
+  source_type         String
+  source_id           String    @db.Uuid
+  reason              String
+  simulated_reference String    @unique
+  is_simulated        Boolean   @default(true)
+  initiated_at        DateTime  @db.Timestamptz(6)
+  completed_at        DateTime? @db.Timestamptz(6)
+
+  invoice Invoice @relation(fields: [invoice_id], references: [id])
+
+  @@unique([invoice_id, source_type, source_id])
+  @@map("simulated_refunds")
+}
+
+// ───────────────────────────── system ─────────────────────────────
+
+model SystemPolicyVersion {
+  id             String   @id @default(uuid(7)) @db.Uuid
+  version_no     Int      @unique
+  values         Json
+  effective_from DateTime @db.Timestamptz(6)
+  is_current     Boolean  @default(false)
+  created_by     String?
+  notes          String?
+  created_at     DateTime @default(now()) @db.Timestamptz(6)
+
+  deals Deal[]
+
+  @@map("system_policy_versions")
+}
+
+model ScheduledDeadline {
+  id            String    @id @default(uuid(7)) @db.Uuid
+  entity_type   String
+  entity_id     String    @db.Uuid
+  deadline_type String
+  sequence      Int       @default(1)
+  due_at        DateTime  @db.Timestamptz(6)
+  status        String    @default("PENDING")
+  attempts      Int       @default(0) @db.SmallInt
+  last_error    String?
+  processed_at  DateTime? @db.Timestamptz(6)
+  created_at    DateTime  @default(now()) @db.Timestamptz(6)
+
+  @@unique([entity_type, entity_id, deadline_type, sequence])
+  @@map("scheduled_deadlines")
+}
+
+model IdempotencyRecord {
+  user_id         String   @db.Uuid
+  endpoint        String
+  key             String
+  request_hash    String   @db.Char(64)
+  response_status Int
+  response_body   Json
+  created_at      DateTime @default(now()) @db.Timestamptz(6)
+  expires_at      DateTime @db.Timestamptz(6)
+
+  @@id([user_id, endpoint, key])
+  @@map("idempotency_records")
+}
+
+model ReferenceCounter {
+  name  String @id
+  value Int    @default(0)
+
+  @@map("reference_counters")
+}
+
+model Notification {
+  id                String    @id @default(uuid(7)) @db.Uuid
+  recipient_user_id String    @db.Uuid
+  event_type        String
+  title_ar          String
+  body_ar           String
+  entity_type       String?
+  entity_id         String?   @db.Uuid
+  link_path         String?
+  is_read           Boolean   @default(false)
+  read_at           DateTime? @db.Timestamptz(6)
+  email_status      String    @default("NOT_REQUIRED")
+  created_at        DateTime  @default(now()) @db.Timestamptz(6)
+
+  recipient User @relation(fields: [recipient_user_id], references: [id])
+
+  @@index([recipient_user_id, is_read, created_at(sort: Desc)])
+  @@map("notifications")
+}
+
+model AuditLog {
+  id            String   @id @default(uuid(7)) @db.Uuid
+  occurred_at   DateTime @default(now()) @db.Timestamptz(6)
+  actor_type    String
+  actor_user_id String?  @db.Uuid
+  actor_org_id  String?  @db.Uuid
+  action        String
+  entity_type   String
+  entity_id     String   @db.Uuid
+  before        Json?
+  after         Json?
+  request_id    String?
+  ip            String?
+  job_id        String?
+
+  @@index([entity_type, entity_id, occurred_at])
+  @@index([actor_org_id, occurred_at])
+  @@index([occurred_at])
+  @@map("audit_logs")
+}

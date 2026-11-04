@@ -1,0 +1,11 @@
+{
+  "name": "@maknaz/design-tokens",
+  "version": "0.1.0",
+  "private": true,
+  "description": "MAKNAZ design tokens (source of truth: tokens.json, CSS variables: tokens.css).",
+  "exports": {
+    "./tokens.css": "./tokens.css",
+    "./tokens.json": "./tokens.json"
+  },
+  "files": ["tokens.css", "tokens.json"]
+}
