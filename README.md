@@ -97,24 +97,34 @@ flowchart RL
 ```
 maknaz/
 ├── docs/          الوثائق (المنتج، الأعمال، المتطلبات، المعمارية، النطاق، التصميم، الجودة، الفريق، التخطيط)
-├── apps/          api/ و web/ — حدود التطبيقات المخططة (لا كود بعد)
-├── packages/      design-tokens/ — ألوان الهوية والخطوط
+├── apps/          api/ (Express + Prisma + PostgreSQL) و web/ (React + Vite، RTL)
+├── packages/      shared/ (الأنواع ومخططات التحقق المشتركة) · design-tokens/ (ألوان الهوية والخطوط)
 ├── data/          reference/ (إحصاءات موثقة) · templates/ (قوالب CSV) · demo/ (بيانات افتراضية)
 ├── brand/         الشعار، لوحة الهوية، الخطوط بتراخيصها
 ├── tools/         مولدات PDF والفيلم، وسكربت فحص الوثائق
-├── tests/         خطة هيكل الاختبارات
+├── tests/         اختبارات E2E (Playwright) وخطة الاختبار
 └── .github/       قوالب Issues وPR، الوسوم، فحص الوثائق
 ```
 
-## التقنيات المقترحة
+## التقنيات
 
-> توصية هندسية بانتظار القرار OD-18 — [سجل القرارات](docs/03-architecture/TECHNICAL_DECISIONS.md).
+> القرار ADR-015 (يحسم OD-18) — [سجل القرارات](docs/03-architecture/TECHNICAL_DECISIONS.md).
 
-Modular Monolith · Django 5 + DRF · PostgreSQL 16 · Next.js + TypeScript + Tailwind (RTL) · معالج مهل قائم على قاعدة البيانات.
+Modular Monolith · Node.js 22 + Express 5 + Zod · Prisma 7 + PostgreSQL 16 · React 19 + Vite + Tailwind CSS 4 (RTL) · Leaflet · Vitest + Playwright · معالج مهل قائم على قاعدة البيانات. حالة التنفيذ في [IMPLEMENTATION_STATUS](docs/IMPLEMENTATION_STATUS.md).
 
 ## البدء
 
 ```bash
+# التطبيق (Node.js 22.12+)
+npm install
+cp apps/api/.env.example apps/api/.env   # ثم عدّل القيم المحلية
+npm run db:start      # PostgreSQL 16 محلي (أو استخدم أي PostgreSQL 16 عبر DATABASE_URL)
+npm run db:migrate    # في طرفية أخرى
+npm run db:seed       # البيانات المرجعية + حساب الإدارة + بيانات عرض تجريبية موسومة
+npm run dev           # الخادم على 4000 والواجهة على http://localhost:5180
+npm test              # اختبارات الوحدة والتكامل
+npm run test:e2e      # اختبارات E2E (تتطلب تشغيل التطبيق)
+
 # فحص الوثائق (Python 3.10+ فقط)
 python3 tools/scripts/validate_docs.py
 

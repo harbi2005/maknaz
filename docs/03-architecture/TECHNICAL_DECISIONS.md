@@ -8,7 +8,7 @@
 |---|---|---|---|
 | ADR-001 | Modular Monolith | Proposed | ARCHITECTURE §1 |
 | ADR-002 | PostgreSQL مرجعًا للبيانات | Proposed | DATABASE §1 |
-| ADR-003 | Django + DRF للخلفية، Next.js للواجهة | Proposed (يعتمد على OD-18) | ARCHITECTURE §7 |
+| ADR-003 | Django + DRF للخلفية، Next.js للواجهة | Superseded بـ ADR-015 | ARCHITECTURE §7 |
 | ADR-004 | المال بالهللة كأعداد صحيحة | Accepted | NFR-022 |
 | ADR-005 | UTC للتخزين وAsia/Riyadh للعرض | Accepted | BR-070 |
 | ADR-006 | المهل صفوف في قاعدة البيانات ومعالج دوري | Proposed | BR-073 |
@@ -19,7 +19,9 @@
 | ADR-011 | Haversine دون PostGIS ودون خدمة توجيه في MVP | Proposed (OD-10) | ARCHITECTURE §6 |
 | ADR-012 | UUIDv7 للمعرفات | Proposed | SEC-16 |
 | ADR-013 | IBM Plex Sans Arabic للواجهة والوثائق التقنية | Proposed | UI_UX §1.1 |
-| ADR-014 | CI للوثائق فقط حتى اعتماد التقنيات | Accepted | .github/workflows |
+| ADR-014 | CI للوثائق فقط حتى اعتماد التقنيات | Superseded بـ ADR-016 | .github/workflows |
+| ADR-015 | TypeScript كاملًا: React + Vite، وExpress + Prisma + PostgreSQL 16 | Accepted (يحسم OD-18) | ARCHITECTURE §7 |
+| ADR-016 | CI لاختبارات التطبيق بجانب فحص الوثائق، دون نشر آلي | Accepted | .github/workflows |
 
 ---
 
@@ -64,3 +66,9 @@ IBM Plex Sans Arabic (OFL) للواجهة والوثائق لوضوح الجدا
 
 ## ADR-014 — CI
 **السياق:** لا كود تطبيق والتقنيات غير معتمدة. **القرار:** workflow واحد يتحقق من الوثائق (الروابط، المراسي، المخططات، الأسرار). **ممنوع:** أي نشر آلي دون اعتماد صريح.
+
+## ADR-015 — TypeScript كاملًا (يحسم OD-18)
+**السياق:** ADR-003 كان مقترحًا بانتظار خبرة الفريق، ونص على بديل NestJS + Prisma إن كانت الخبرة في TypeScript أعمق. وجّه قائد الفريق ببناء النسخة الأولى بـ React وTypeScript. **القرار:** الواجهة React 19 + Vite + Tailwind CSS 4 + React Router؛ الخلفية Node.js 22 + Express 5 + Zod؛ قاعدة البيانات PostgreSQL 16 عبر Prisma 7 مع ترحيلات SQL يدوية للقيود التي لا يعبر عنها Prisma (CHECK، الفهارس الجزئية، EXCLUDE، triggers)؛ الاختبارات Vitest وPlaywright؛ حزمة `packages/shared` للأنواع ومخططات التحقق المشتركة؛ npm Workspaces. **العواقب:** لغة واحدة للفريق ومخططات تحقق مشتركة بين الواجهة والخادم؛ لا لوحة إدارة جاهزة فبُنيت شاشات الإدارة؛ الجلسة بملف تعريف `HttpOnly` + رمز CSRF كما في API_SPECIFICATION §1؛ ADR-001/002/004–013 تبقى سارية دون تغيير. **التطوير المحلي:** خادم PostgreSQL 16 مضمن (`embedded-postgres`) للأجهزة بلا Docker، وأي PostgreSQL 16 آخر يعمل بتغيير `DATABASE_URL`.
+
+## ADR-016 — CI للتطبيق
+**القرار:** workflow `app-tests.yml` يشغل فحص الأنواع واختبارات الوحدة والتكامل على PostgreSQL 16 حقيقي (خدمة في GitHub Actions) وبناء الواجهة، بجانب `docs-validation.yml`. **ممنوع:** أي نشر آلي دون اعتماد صريح (يبقى من ADR-014).

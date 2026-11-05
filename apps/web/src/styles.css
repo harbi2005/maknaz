@@ -1,0 +1,53 @@
+@import 'tailwindcss';
+@import '@maknaz/design-tokens/tokens.css';
+@import 'leaflet/dist/leaflet.css';
+
+/* Brand fonts embedded from /brand/fonts (SIL OFL 1.1, licences alongside). ADR-013. */
+@font-face { font-family: 'IBM Plex Sans Arabic'; font-weight: 300; font-display: swap; src: url('@brand/fonts/ibm-plex-sans-arabic/IBMPlexSansArabic-Light.ttf') format('truetype'); }
+@font-face { font-family: 'IBM Plex Sans Arabic'; font-weight: 400; font-display: swap; src: url('@brand/fonts/ibm-plex-sans-arabic/IBMPlexSansArabic-Regular.ttf') format('truetype'); }
+@font-face { font-family: 'IBM Plex Sans Arabic'; font-weight: 500; font-display: swap; src: url('@brand/fonts/ibm-plex-sans-arabic/IBMPlexSansArabic-Medium.ttf') format('truetype'); }
+@font-face { font-family: 'IBM Plex Sans Arabic'; font-weight: 600; font-display: swap; src: url('@brand/fonts/ibm-plex-sans-arabic/IBMPlexSansArabic-SemiBold.ttf') format('truetype'); }
+@font-face { font-family: 'IBM Plex Sans Arabic'; font-weight: 700; font-display: swap; src: url('@brand/fonts/ibm-plex-sans-arabic/IBMPlexSansArabic-Bold.ttf') format('truetype'); }
+@font-face { font-family: 'IBM Plex Mono'; font-weight: 400; font-display: swap; src: url('@brand/fonts/ibm-plex-mono/IBMPlexMono-Regular.ttf') format('truetype'); }
+@font-face { font-family: 'IBM Plex Mono'; font-weight: 500; font-display: swap; src: url('@brand/fonts/ibm-plex-mono/IBMPlexMono-Medium.ttf') format('truetype'); }
+
+/* Tailwind theme mapped onto the MAKNAZ design tokens (packages/design-tokens). */
+@theme {
+  --color-charcoal: var(--mkz-charcoal);
+  --color-gray-dark: var(--mkz-mineral-gray);
+  --color-muted: var(--mkz-mineral-gray-on-light);
+  --color-copper: var(--mkz-copper);
+  --color-copper-dark: #9a5d3e;
+  --color-sand: var(--mkz-sand);
+  --color-paper: var(--mkz-off-white);
+  --color-line: #d8d2c6;
+  --color-success: var(--mkz-success);
+  --color-warning: var(--mkz-warning);
+  --color-danger: var(--mkz-danger);
+  --color-info: var(--mkz-info);
+  --font-sans: var(--mkz-font-arabic);
+  --font-mono: var(--mkz-font-mono);
+  --radius-card: var(--mkz-radius-lg);
+}
+
+html { background: var(--mkz-sand); color: var(--mkz-charcoal); }
+body { font-family: var(--mkz-font-arabic); min-height: 100vh; overflow-x: hidden; }
+* { -webkit-tap-highlight-color: transparent; }
+
+/* Numbers, references and formulas never flip in RTL (UI_UX §1.2, UX-AC7). */
+.ltr { direction: ltr; unicode-bidi: isolate; display: inline-block; }
+.num { font-variant-numeric: tabular-nums; }
+
+:focus-visible { outline: 3px solid var(--mkz-copper); outline-offset: 2px; border-radius: 4px; }
+
+/* Brand pattern: thin diagonal lines from the identity board. */
+.brand-pattern {
+  background-image: repeating-linear-gradient(135deg, rgba(184,115,79,0.10) 0 1px, transparent 1px 22px);
+}
+
+.leaflet-container { font-family: var(--mkz-font-arabic); border-radius: 12px; z-index: 0; }
+
+@media print {
+  .no-print { display: none !important; }
+  body, html { background: white; }
+}

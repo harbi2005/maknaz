@@ -161,6 +161,33 @@ quotesRouter.post('/deals/:id/quotes', idempotent(async (req) => {
   return { status: 201, body: quoteDto({ ...q, carrier_name: auth(req).org?.legalNameAr }, true) };
 }));
 
+/** Live price preview for the quote form: same engine and eligibility, nothing is stored. */
+quotesRouter.post('/deals/:id/quotes/preview', async (req, res) => {
+  const org = requireActiveOrg(req, 'CARRIER');
+  const dealId = idParam(req.params.id);
+  const input = parse(submitQuoteSchema.pick({ service_id: true, route_distance_km: true }), req.body);
+  const deal = await db().deal.findUnique({ where: { id: dealId } });
+  if (!deal) throw notFound();
+  const policy = await policyById(db() as never, deal.policy_version_id);
+  const geo = dealGeo(deal);
+  const [eligible] = await findEligibleCarriers(db() as never, geo, bandsForDeal(deal, policy), policy, org.id);
+  const svc = eligible?.services.find((s) => s.service.id === input.service_id);
+  if (!svc) throw notFound();
+  const snapshot = calculatePrice(
+    toPricingParams(svc.version),
+    {
+      weightTons: deal.quantity_tons,
+      routeDistanceKm: new Prisma.Decimal(input.route_distance_km),
+      payloadTonsPerVehicle: svc.service.payload_tons_per_vehicle,
+      serviceMinTons: svc.service.min_shipment_tons,
+      serviceMaxTons: svc.service.max_shipment_tons,
+      straightLineKmMineToFactory: new Prisma.Decimal(geo.straightLineMineToFactory),
+    },
+    now(),
+  );
+  res.json({ ...snapshot, total: money(snapshot.total_halalas) });
+});
+
 /** P-46: carrier withdraws its SUBMITTED quote. */
 quotesRouter.post('/quotes/:id/withdraw', idempotent(async (req) => {
   const org = requireActiveOrg(req, 'CARRIER');

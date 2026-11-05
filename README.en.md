@@ -88,24 +88,31 @@ Responsibilities and ownership matrix: [TEAM_RESPONSIBILITIES](docs/07-team/TEAM
 ```
 maknaz/
 ├── docs/          documentation (product, business, requirements, architecture, domain, design, quality, team, planning)
-├── apps/          api/ and web/ — planned application boundaries (no code yet)
-├── packages/      design-tokens/ — brand colours and typography
+├── apps/          api/ (Express + Prisma + PostgreSQL) and web/ (React + Vite, RTL)
+├── packages/      shared/ (shared types and validation) · design-tokens/ (brand colours and typography)
 ├── data/          reference/ (verified statistics) · templates/ (CSV templates) · demo/ (hypothetical data)
 ├── brand/         logo, identity board, fonts with licences
 ├── tools/         PDF and film generators, documentation validator
-├── tests/         planned test layout
+├── tests/         end-to-end tests (Playwright) and test plan
 └── .github/       issue and PR templates, labels, docs validation workflow
 ```
 
-## Proposed stack
+## Stack
 
-> Engineering recommendation pending decision OD-18 — see the [decision log](docs/03-architecture/TECHNICAL_DECISIONS.md).
+> Decision ADR-015 (closes OD-18) — see the [decision log](docs/03-architecture/TECHNICAL_DECISIONS.md).
 
-Modular monolith · Django 5 + DRF · PostgreSQL 16 · Next.js + TypeScript + Tailwind (RTL) · database-backed deadline scheduler.
+Modular monolith · Node.js 22 + Express 5 + Zod · Prisma 7 + PostgreSQL 16 · React 19 + Vite + Tailwind CSS 4 (RTL) · Leaflet · Vitest + Playwright · database-backed deadline scheduler. Implementation status: [IMPLEMENTATION_STATUS](docs/IMPLEMENTATION_STATUS.md).
 
 ## Getting started
 
 ```bash
+npm install                                 # Node.js 22.12+
+cp apps/api/.env.example apps/api/.env      # then edit local values
+npm run db:start                            # local PostgreSQL 16 (or any PostgreSQL 16 via DATABASE_URL)
+npm run db:migrate && npm run db:seed       # in another terminal: schema, reference data, admin, labelled demo data
+npm run dev                                 # API on :4000, web on http://localhost:5180
+npm test                                    # unit + integration tests
+npm run test:e2e                            # end-to-end tests (app must be running)
 python3 tools/scripts/validate_docs.py      # docs checks, Python 3.10+ only
 python3 tools/docs-pdf/build_docs.py        # rebuild the engineering PDF
 ```

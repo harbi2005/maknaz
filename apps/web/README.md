@@ -1,21 +1,29 @@
 # apps/web — واجهة الويب
 
-> ⛔ لم يبدأ التنفيذ. تنفيذ كل شاشة يبدأ بعد تصميمها المعتمد (UX).
+React 19 + Vite + Tailwind CSS 4 + React Router + TanStack Query + Leaflet، عربية أولًا بـ `dir="rtl"`. الألوان من [`packages/design-tokens`](../../packages/design-tokens/README.md)، والخطوط والشعار من `brand/` مباشرة دون نسخ.
 
-**التقنية المقترحة (REC، بانتظار OD-18):** Next.js + TypeScript + Tailwind CSS بإعداد RTL، مع التوكنز من [`packages/design-tokens`](../../packages/design-tokens/README.md).
+```bash
+npm run dev     # http://localhost:5180 مع تمرير /api إلى الخادم على 4000
+npm run build   # فحص الأنواع + بناء الإنتاج
+npm test        # اختبارات الوحدة
+```
 
 ## الالتزامات
 
-| البند | المرجع |
+| البند | التنفيذ |
 |---|---|
-| عربية أولًا، `dir="rtl"`، متجاوبة | UI_UX §1 |
-| الخط IBM Plex Sans Arabic من `brand/fonts/` | [ADR-013](../../docs/03-architecture/TECHNICAL_DECISIONS.md#adr-013--الخط) |
-| أربع حالات لكل شاشة: تحميل، فارغ، خطأ، نجاح | [DEFINITION_OF_DONE](../../docs/07-team/DEFINITION_OF_DONE.md#3-التصميم-ux) |
-| شارة `SimulationBadge` في كل شاشة مالية | [PAYMENT_SIMULATION](../../docs/04-domain/PAYMENT_SIMULATION.md#7-الواجهة) |
-| المسافة المباشرة موسومة «تقريبية» | [LOGISTICS_PRICING_ENGINE §8](../../docs/04-domain/LOGISTICS_PRICING_ENGINE.md#8-المسافة-والمطابقة) |
-| لا مبالغ تُحسب أو تُرسل من الواجهة | SR-07 |
-| المواعيد بتوقيت الرياض مع ذكر المنطقة | ADR-005 |
+| عربية أولًا، RTL، متجاوبة | شريط جانبي على الشاشات الكبيرة، تنقل سفلي على الجوال، لا تمرير أفقي من 360px |
+| الخط IBM Plex Sans Arabic | `@font-face` من `brand/fonts/` |
+| حالات التحميل والفراغ والخطأ والنجاح | `Skeleton` · `EmptyState` · `ErrorState` (مع `request_id`) · Toast |
+| `SimulationBadge` في كل شاشة مالية | الفاتورة، الإيصال، الصفقة بعد التأكيد، نافذة الدفع |
+| `VerificationTag` و`DistanceLabel` | كل مواصفة وكل مسافة موسومة |
+| لا مبالغ تُحسب أو تُرسل من الواجهة | الأسعار تأتي من الخادم؛ معاينة سعر الناقل عبر `/quotes/preview` |
+| المواعيد بتوقيت الرياض مع ذكر المنطقة | `lib/format.ts` |
+| لا زر لإجراء لا يملكه الدور | الأزرار تُبنى من حقل `actions` الذي يحسبه الخادم، والخادم يرفض أيضًا |
 
-## لوحات الأدوار
+## تبسيط التجربة
 
-المنجم · المصنع · الناقل · الإدارة — قائمة الشاشات `SCR-*` في [UI_UX_REQUIREMENTS](../../docs/05-design/UI_UX_REQUIREMENTS.md).
+- لوحة كل دور قائمة «بانتظارك» بزر إجراء واحد لكل عنصر.
+- إعداد الجهة خطوتان (النوع، ثم البيانات والموقع الأول على خريطة).
+- نموذج المادة صفحة واحدة بأقسام بدل معالج من خمس خطوات.
+- التسعير للناقل «حفظ وتفعيل» بخطوة واحدة؛ الإصدارات تُدار في الخلفية.
