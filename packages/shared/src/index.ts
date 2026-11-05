@@ -6,3 +6,6 @@ export * from './labels.js';
 export * from './contracts.js';
 export * from './sites.js';
 export * from './geo.js';
+export * from './catalog.js';
+export * from './trading.js';
+export * from './logistics.js';

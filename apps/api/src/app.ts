@@ -11,6 +11,7 @@ import { loadSession, requireAuthentication, requireCsrf } from './middleware/se
 import { authRouter } from './modules/accounts/auth.routes.js';
 import { organizationsRouter } from './modules/accounts/organizations.routes.js';
 import { adminRouter } from './modules/admin/admin.routes.js';
+import { publicFilesRouter } from './modules/catalog/catalog.routes.js';
 import { notificationsRouter } from './modules/notifications/notifications.routes.js';
 import { policyRouter } from './modules/policy/policy.routes.js';
 import { sitesRouter } from './modules/sites/sites.routes.js';
@@ -65,6 +66,7 @@ export function createApp() {
 
   // Public endpoints (SR-01 exceptions): register, login, logout.
   api.use(authRouter);
+  api.use(publicFilesRouter);
   api.use(requireAuthentication);
   api.use(requireCsrf);
   api.use(organizationsRouter);
